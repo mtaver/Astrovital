@@ -25,6 +25,20 @@ nav{display:flex;gap:8px;flex-wrap:wrap;padding:19px 0}nav button[aria-pressed=t
 </nav>
 <section id="check" class="grid" aria-label="Crew check-in">
 <div class="stack"><article id="outcome" class="card outcome" aria-live="polite" hidden></article>
+<article class="card" id="recheck" hidden>
+<p class="eyebrow">Follow-up measurement</p><h2>Recheck &amp; Compare</h2>
+<p id="pulseComparison" class="big"></p>
+<p id="recheckResult" role="status" class="muted"></p>
+<button type="button" id="startRecheck">Start recheck</button>
+<form id="recheckForm" hidden>
+<p>Rest quietly. Take your pulse in the same supported position, using the same device and method if possible.</p>
+<div class="fields">
+<label>Repeat resting pulse <span class="label-note">bpm</span><input name="repeat" type="number" min="20" max="250" step="1" required></label>
+<label>Measurement conditions <span class="label-note">optional</span><input name="conditions" maxlength="160" placeholder="Same device, after resting"></label>
+</div>
+<fieldset><legend>Emergency symptoms</legend><label><input type="checkbox" name="urgent"> New chest pain, severe trouble breathing, stroke signs, or loss of consciousness</label></fieldset>
+<div class="actions"><button class="primary">Save repeat reading</button><button type="button" id="cancelRecheck">Cancel</button></div>
+</form></article>
 <article class="card"><h2>Crew check-in</h2><p class="muted">Use sample values for this prototype. Entries stay in this browser. Leave unavailable readings blank.</p>
 <div class="actions"><button id="fatigue" type="button">Load fatigue scenario</button><button id="emergency" type="button">Load emergency scenario</button><button id="clear" type="button">Clear form</button></div>
 <form id="form">
@@ -61,8 +75,13 @@ nav{display:flex;gap:8px;flex-wrap:wrap;padding:19px 0}nav button[aria-pressed=t
 <canvas class="chart" id="chart" width="780" height="290" role="img" aria-label="Time series of archived absorbed radiation dose rate"></canvas>
 <label for="seek">Browse readings</label><input id="seek" type="range" min="0" value="0"><div class="sample"><span id="dose" class="big"></span><span id="when" class="unit"></span></div>
 <div class="actions"><button id="attach" class="primary">Attach selected reading to briefing</button><a href="./radlab.csv" download>Download source CSV</a></div><p class="status" id="replayStatus" role="status"></p>
+<hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+<h3>Compare two archive readings</h3>
+<p class="muted">Save the current selection as A, then move the slider to choose B.</p>
+<div class="actions"><button id="pinReading" type="button">Set current reading as A</button><button id="attachPair" type="button" disabled>Attach comparison</button></div>
+<p id="archiveComparison" class="status" role="status"></p>
 </article><article class="card"><h2>What this measures</h2><p>DosTel1 recorded radiation at the instrument’s location on the ISS. This is an archived environmental reading. An astronaut’s personal dose requires personal dosimetry.</p><p>This ISS record belongs to a different mission than the simulated crew check-in. Attach it as historical context.</p><a href="https://visualization.osdr.nasa.gov/radlab/gui/data-api/">NASA RadLab API documentation</a></article></section>
-<section id="brief" hidden class="grid" aria-label="Crew briefing"><article class="card"><h2>Crew medical briefing</h2><p class="muted">Generate a briefing from your latest check-in and any attached NASA archive reading.</p><div class="actions"><button id="generate" class="primary">Generate briefing</button><button id="download" disabled>Download text</button></div><p class="status" id="briefStatus" role="status"></p><pre id="briefText" hidden></pre></article><article class="card"><h2>Communications exercise</h2><label><input id="delay" type="checkbox" checked> Simulate a communications outage</label><p class="muted">The prototype saves the briefing locally for a future handoff. Download the text to review what a flight surgeon would receive.</p></article></section>
+<section id="brief" hidden class="grid" aria-label="Crew briefing"><article class="card"><h2>Crew medical briefing</h2><p class="muted">Generate a briefing from your latest check-in and any attached NASA archive reading or comparison.</p><div class="actions"><button id="generate" class="primary">Generate briefing</button><button id="download" disabled>Download text</button></div><p class="status" id="briefStatus" role="status"></p><pre id="briefText" hidden></pre></article><article class="card"><h2>Communications exercise</h2><label><input id="delay" type="checkbox" checked> Simulate a communications outage</label><p class="muted">The prototype saves the briefing locally for a future handoff. Download the text to review what a flight surgeon would receive.</p></article></section>
 <section id="hazards" hidden class="grid" aria-label="Hazards and sources"><article class="card guide"><h2>Five hazards of human spaceflight</h2>
 <details open><summary>Space radiation</summary><p>Inspect instrument readings in the NASA replay. In a mission, check personal dosimetry and follow radiation alerts and shelter procedures.</p></details>
 <details><summary>Isolation and confinement</summary><p>Use sleep and mood logs to surface changes. Share sustained changes with crew medical support and use the mission’s fatigue and behavioral health procedures.</p></details>
@@ -160,6 +179,6 @@ timestamp,instrument_id,absorbed_dose_rate
 "2022-04-02T01:04:40","DosTel1",6.572122
 "2022-04-02T01:05:00","DosTel1",6.24009614376997
 </script>
-<script src="./app.js"></script>
+<script src="./app.js?v=2"></script>
 </body>
 </html>
