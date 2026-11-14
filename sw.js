@@ -1,9 +1,9 @@
 const scope = self.registration.scope;
 const cachePrefix = 'astrovital:' + scope + ':';
-const cacheName = cachePrefix + 'v1';
-const assets = ['./','./index.html','./app.js','./radlab.csv'].map(path => new URL(path,scope).href);
+const cacheName = cachePrefix + 'v2';
+const assets = ['./','./index.html','./app.js?v=2','./radlab.csv'].map(path => new URL(path,scope).href);
 self.addEventListener('install',event => {
-  event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(assets)));
+  event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(assets)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate',event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith(cachePrefix) && key !== cacheName).map(key => caches.delete(key)))).then(() => self.clients.claim()));
