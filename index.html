@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a111a">
+<meta name="description" content="Astrovital is a NASA Space Apps astronaut health assessment prototype.">
+<title>Astrovital • Crew health beyond Earth</title>
+<style>
+:root{color-scheme:dark;--bg:#090f17;--panel:#101b27;--line:#233647;--text:#f0f6f9;--muted:#a6b7c7;--accent:#74f3d3;--warn:#ffcf7c;--alert:#ff969d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 "Instrument Sans",system-ui,sans-serif}a{color:var(--accent)}button,input,select,textarea{font:inherit}button,select{cursor:pointer}button,input,select,textarea{border:1px solid var(--line);border-radius:8px;color:var(--text);background:#101b27;padding:.65rem .85rem}button:hover{border-color:var(--accent)}:focus-visible{outline:3px solid var(--accent);outline-offset:3px}button.primary{background:var(--accent);color:#0a211f;font-weight:750;border-color:var(--accent)}[hidden]{display:none!important}
+header{border-bottom:1px solid var(--line);background:#0c141e}.bar,main,footer{width:min(1120px,calc(100% - 36px));margin:auto}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:70px}.brand{display:flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:800;letter-spacing:-.04em}.mark{color:var(--accent);display:grid;place-items:center;width:32px;height:32px;border:1px solid #367868;border-radius:9px}.minor,.eyebrow,.unit,.muted{color:var(--muted)}.eyebrow,.minor{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700}.eyebrow{color:var(--accent)}main{padding:30px 0 52px}.hero{border:1px solid var(--line);border-radius:18px;padding:clamp(25px,5vw,58px);background:radial-gradient(ellipse at 92% 110%,#163b46 0%,transparent 57%),linear-gradient(120deg,#172733,#0d1924 65%);position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-48px;bottom:-215px;width:435px;height:365px;border:1px solid #63bba945;border-radius:50%;box-shadow:0 0 0 23px #63bba914,0 0 0 55px #63bba910,0 0 0 90px #63bba90a;pointer-events:none}.hero>*{position:relative;z-index:1}h1,h2,h3,p{margin:0 0 .65rem}h1{font-size:clamp(2.45rem,6.4vw,4.65rem);line-height:1.02;letter-spacing:-.065em}h2{font-size:1.55rem;letter-spacing:-.035em}h3{font-size:1.08rem}.hero p{max-width:570px}.hero p:last-child{margin-bottom:0}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:19px 0}nav button[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:#12302e}.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(245px,1fr);gap:16px;align-items:start}.card{border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:clamp(16px,3vw,25px)}.stack{display:grid;gap:16px}.fields,.details{display:grid;gap:12px;grid-template-columns:1fr 1fr}.fields label,.fields input,.fields select{display:block;width:100%}label{font-weight:650}input,select,textarea{margin-top:4px}fieldset{margin:16px 0;border:1px solid var(--line);border-radius:8px;padding:10px 13px}fieldset label{display:block;font-size:.92rem;font-weight:500;margin-bottom:5px}input[type=checkbox]{accent-color:var(--accent)}.wide{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.outcome{border-inline-start:4px solid var(--accent)}.outcome[data-level=review]{border-color:var(--warn)}.outcome[data-level=urgent]{border-color:var(--alert)}.outcome[data-level=urgent] h2{color:var(--alert)}.outcome[data-level=review] h2{color:var(--warn)}ul{padding-left:1.18rem;margin:.45rem 0 .75rem}.guide details{border-top:1px solid var(--line);padding:.55rem 0}.guide summary{cursor:pointer;font-weight:700}.guide details p{color:var(--muted);font-size:.92rem;margin:.5rem 0 0}.status{min-height:1.5em;color:var(--accent);margin-top:6px}.chart{width:100%;height:auto;display:block;background:#0b1521;border-radius:10px;margin:12px 0}input[type=range]{width:100%;padding:0;accent-color:var(--accent)}.big{font-size:2.1rem;font-weight:750;color:var(--accent)}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0a141f;border-radius:8px;padding:14px;font:inherit}footer{color:var(--muted);border-top:1px solid var(--line);padding:16px 0 28px;font-size:.85rem}.mission{display:flex;align-items:center;gap:7px;text-align:right}.dot{color:var(--accent)}.tools{margin-top:12px}.sample{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}.history{max-height:210px;overflow:auto}.history li{margin-bottom:6px}.badge{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:20px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}.label-note{font-weight:400;color:var(--muted);font-size:.8rem}.reference li{margin-bottom:.6rem}@media(max-width:750px){.grid{grid-template-columns:1fr}.bar{min-height:60px}}@media(max-width:410px){.fields,.details{grid-template-columns:1fr}.bar .minor{display:none}}
+</style>
+</head>
+<body>
+<header><div class="bar"><div class="brand"><span class="mark" aria-hidden="true">✦</span> Astrovital</div><div class="mission minor"><span class="dot" aria-hidden="true">●</span> Space Apps prototype</div></div></header>
+<main>
+<section class="hero"><p class="eyebrow">Crew health</p><h1>Health checks<br>beyond Earth</h1><p>Log a crew health check, compare readings with a personal baseline, and prepare a briefing when Earth is out of reach.</p></section>
+<nav aria-label="Workspace">
+<button type="button" data-tab="check" aria-pressed="true">Crew check-in</button>
+<button type="button" data-tab="replay" aria-pressed="false">NASA mission replay</button>
+<button type="button" data-tab="brief" aria-pressed="false">Crew briefing</button>
+<button type="button" data-tab="hazards" aria-pressed="false">Hazards and sources</button>
+</nav>
+<section id="check" class="grid" aria-label="Crew check-in">
+<div class="stack"><article id="outcome" class="card outcome" aria-live="polite" hidden></article>
+<article class="card"><h2>Crew check-in</h2><p class="muted">Use sample values for this prototype. Entries stay in this browser. Leave unavailable readings blank.</p>
+<div class="actions"><button id="fatigue" type="button">Load fatigue scenario</button><button id="emergency" type="button">Load emergency scenario</button><button id="clear" type="button">Clear form</button></div>
+<form id="form">
+<fieldset><legend>Symptoms to report immediately</legend>
+<label><input type="checkbox" name="red" value="New chest pain or pressure"> New chest pain or pressure</label>
+<label><input type="checkbox" name="red" value="Severe trouble breathing"> Severe trouble breathing</label>
+<label><input type="checkbox" name="red" value="Sudden facial droop, arm weakness, or speech difficulty"> Sudden facial droop, arm weakness, or speech difficulty</label>
+<label><input type="checkbox" name="red" value="Loss of consciousness"> Loss of consciousness</label>
+</fieldset>
+<div class="fields">
+<label>Systolic pressure <span class="label-note">mmHg</span><input name="sys" type="number" min="40" max="300" step="1"></label>
+<label>Diastolic pressure <span class="label-note">mmHg</span><input name="dia" type="number" min="20" max="200" step="1"></label>
+<label>Resting pulse <span class="label-note">bpm</span><input name="pulse" type="number" min="20" max="250" step="1"></label>
+<label>Usual resting pulse <span class="label-note">bpm</span><input name="baseline" type="number" min="20" max="250" step="1"></label>
+<label>Blood glucose <span class="label-note">mg/dL</span><input name="glucose" type="number" min="1" max="1000" step="1"></label>
+<label>Glucose timing<select name="timing"><option>Unspecified</option><option>Before food</option><option>After food</option></select></label>
+<label>Temperature <span class="label-note">°C</span><input name="temp" type="number" min="30" max="46" step=".1"></label>
+<label>Temperature method<select name="method"><option>Unspecified</option><option>Oral</option><option>Ear</option><option>Forehead</option><option>Other</option></select></label>
+<label>Sleep in the past 24 hours <span class="label-note">hours</span><input name="sleep" type="number" min="0" max="24" step=".1"></label>
+<label>Usual sleep <span class="label-note">hours</span><input name="usualSleep" type="number" min="0" max="24" step=".1"></label>
+<label>Mood<select name="mood"><option value="">Choose a description</option><option>Good</option><option>Okay</option><option>Low</option><option>Very low</option></select></label>
+<label>Other symptoms or actions <span class="label-note">optional</span><input name="notes" maxlength="300"></label>
+</div>
+<div class="actions"><button class="primary" type="submit">Assess and log</button></div>
+<p id="formStatus" class="status" role="status"></p>
+</form></article></div>
+<div class="stack"><article class="card guide"><h2>How to measure</h2>
+<details open><summary>Blood pressure and pulse</summary><p>Use the mission-approved cuff and supported position. Rest quietly first, support the arm at heart level, and record the repeat reading separately. For resting pulse, measure when calm and at rest.</p></details>
+<details><summary>Glucose and temperature</summary><p>Use mission-approved devices and follow their instructions. Record glucose timing relative to food and the method used to measure temperature.</p></details>
+<details><summary>Sleep and mood</summary><p>Enter time actually asleep during the last 24 hours, including naps. Choose the mood description that best fits today.</p></details>
+</article><article class="card"><h2>Recent check-ins</h2><p id="trend" class="muted"></p><ul id="history" class="history"></ul></article></div></section>
+<section id="replay" hidden class="grid" aria-label="NASA mission replay"><article class="card">
+<span class="badge">NASA OSDR archive</span><h2>ISS radiation replay</h2><p class="muted">DosTel1 · 1–2 April 2022 · Absorbed dose rate (μGy/h)</p>
+<canvas class="chart" id="chart" width="780" height="290" role="img" aria-label="Time series of archived absorbed radiation dose rate"></canvas>
+<label for="seek">Browse readings</label><input id="seek" type="range" min="0" value="0"><div class="sample"><span id="dose" class="big"></span><span id="when" class="unit"></span></div>
+<div class="actions"><button id="attach" class="primary">Attach selected reading to briefing</button><a href="./radlab.csv" download>Download source CSV</a></div><p class="status" id="replayStatus" role="status"></p>
+</article><article class="card"><h2>What this measures</h2><p>DosTel1 recorded radiation at the instrument’s location on the ISS. This is an archived environmental reading. An astronaut’s personal dose requires personal dosimetry.</p><p>This ISS record belongs to a different mission than the simulated crew check-in. Attach it as historical context.</p><a href="https://visualization.osdr.nasa.gov/radlab/gui/data-api/">NASA RadLab API documentation</a></article></section>
+<section id="brief" hidden class="grid" aria-label="Crew briefing"><article class="card"><h2>Crew medical briefing</h2><p class="muted">Generate a briefing from your latest check-in and any attached NASA archive reading.</p><div class="actions"><button id="generate" class="primary">Generate briefing</button><button id="download" disabled>Download text</button></div><p class="status" id="briefStatus" role="status"></p><pre id="briefText" hidden></pre></article><article class="card"><h2>Communications exercise</h2><label><input id="delay" type="checkbox" checked> Simulate a communications outage</label><p class="muted">The prototype saves the briefing locally for a future handoff. Download the text to review what a flight surgeon would receive.</p></article></section>
+<section id="hazards" hidden class="grid" aria-label="Hazards and sources"><article class="card guide"><h2>Five hazards of human spaceflight</h2>
+<details open><summary>Space radiation</summary><p>Inspect instrument readings in the NASA replay. In a mission, check personal dosimetry and follow radiation alerts and shelter procedures.</p></details>
+<details><summary>Isolation and confinement</summary><p>Use sleep and mood logs to surface changes. Share sustained changes with crew medical support and use the mission’s fatigue and behavioral health procedures.</p></details>
+<details><summary>Distance from Earth</summary><p>Record symptoms, readings, and steps taken in a briefing that can be stored locally when the link is unavailable.</p></details>
+<details><summary>Gravity fields</summary><p>Changes in gravity can affect circulation and balance. Document dizziness and check whether a measurement followed exercise or a gravity transition.</p></details>
+<details><summary>Hostile closed environments</summary><p>If multiple crew members feel unwell, follow the vehicle’s environmental checks. Cabin sensors provide CO₂, oxygen and pressure measurements.</p></details>
+</article><article class="card reference"><h2>Sources</h2><ul><li><a href="https://www.nasa.gov/hrp/hazards/">NASA Human Research Program · Five hazards</a></li><li><a href="https://www.nasa.gov/hrp/risks/">NASA Human Research Program · Human spaceflight risks</a></li><li><a href="https://visualization.osdr.nasa.gov/radlab/gui/overview/">NASA OSDR · RadLab</a></li><li><a href="https://www.heart.org/en/about-us/heart-attack-and-stroke-symptoms">AHA · Emergency symptoms</a></li><li><a href="https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/monitoring-your-blood-pressure-at-home">AHA · Blood pressure</a></li><li><a href="https://www.cdc.gov/diabetes/treatment/treatment-low-blood-sugar-hypoglycemia.html">CDC · Low glucose</a></li><li><a href="https://www.cdc.gov/sleep/about/index.html">CDC · Sleep duration</a></li></ul><p>Clinical screening examples draw on terrestrial guidance. Mission medical teams would need to approve all action rules and protocols before operational use.</p></article></section>
+</main>
+<footer>Miva Ad Astra · NASA Space Apps prototype · Training and demonstration only</footer>
+<script id="archive" type="text/plain">
+timestamp,instrument_id,absorbed_dose_rate
+"2022-04-01T23:00:00","DosTel1",9.815504
+"2022-04-01T23:00:33","DosTel1",9.835079
+"2022-04-01T23:02:13","DosTel1",7.949537
+"2022-04-01T23:03:53","DosTel1",6.228811
+"2022-04-01T23:05:00","DosTel1",5.26644315384615
+"2022-04-01T23:05:33","DosTel1",5.935572
+"2022-04-01T23:07:25","DosTel1",3.554651
+"2022-04-01T23:09:05","DosTel1",2.907824
+"2022-04-01T23:10:00","DosTel1",1.80274820916905
+"2022-04-01T23:10:45","DosTel1",2.411519
+"2022-04-01T23:12:25","DosTel1",1.65945
+"2022-04-01T23:30:00","DosTel1",7.249702
+"2022-04-01T23:31:57","DosTel1",7.249702
+"2022-04-01T23:32:47","DosTel1",9.265368
+"2022-04-01T23:34:27","DosTel1",10.282241
+"2022-04-01T23:35:00","DosTel1",10.687007
+"2022-04-01T23:36:07","DosTel1",12.513412
+"2022-04-01T23:37:47","DosTel1",11.371361
+"2022-04-01T23:39:39","DosTel1",11.658574
+"2022-04-01T23:40:00","DosTel1",11.4569029871795
+"2022-04-01T23:41:19","DosTel1",11.351039
+"2022-04-01T23:42:59","DosTel1",10.851643
+"2022-04-01T23:44:39","DosTel1",9.250686
+"2022-04-01T23:45:00","DosTel1",9.69874016666667
+"2022-04-01T23:46:19","DosTel1",9.069411
+"2022-04-01T23:48:11","DosTel1",6.608362
+"2022-04-01T23:49:51","DosTel1",4.14739
+"2022-04-01T23:50:00","DosTel1",4.34988866666667
+"2022-04-01T23:51:31","DosTel1",2.293914
+"2022-04-01T23:53:11","DosTel1",2.278151
+"2022-04-01T23:54:51","DosTel1",2.243457
+"2022-04-01T23:55:00","DosTel1",2.16451164102564
+"2022-04-01T23:56:31","DosTel1",1.992561
+"2022-04-01T23:58:23","DosTel1",2.254816
+"2022-04-02T00:00:00","DosTel1",2.097082
+"2022-04-02T00:00:03","DosTel1",1.657364
+"2022-04-02T00:01:43","DosTel1",2.379066
+"2022-04-02T00:03:23","DosTel1",2.23318
+"2022-04-02T00:05:00","DosTel1",2.64522921794872
+"2022-04-02T00:05:03","DosTel1",2.762479
+"2022-04-02T00:06:43","DosTel1",2.908443
+"2022-04-02T00:08:35","DosTel1",5.178867
+"2022-04-02T00:10:00","DosTel1",9.30545125
+"2022-04-02T00:10:15","DosTel1",8.021398
+"2022-04-02T00:11:55","DosTel1",12.01077
+"2022-04-02T00:15:00","DosTel1",7.36686026760563
+"2022-04-02T00:15:15","DosTel1",6.664691
+"2022-04-02T00:16:55","DosTel1",7.988249
+"2022-04-02T00:18:48","DosTel1",9.461556
+"2022-04-02T00:20:00","DosTel1",10.398403
+"2022-04-02T00:20:28","DosTel1",10.531359
+"2022-04-02T00:22:08","DosTel1",11.202294
+"2022-04-02T00:23:48","DosTel1",10.780323
+"2022-04-02T00:25:00","DosTel1",11.121779827476
+"2022-04-02T00:25:28","DosTel1",11.680827
+"2022-04-02T00:27:08","DosTel1",10.929222
+"2022-04-02T00:29:01","DosTel1",12.616413
+"2022-04-02T00:30:00","DosTel1",11.4865963333333
+"2022-04-02T00:30:41","DosTel1",10.855738
+"2022-04-02T00:32:21","DosTel1",10.987638
+"2022-04-02T00:34:01","DosTel1",8.883808
+"2022-04-02T00:35:00","DosTel1",7.04124314696486
+"2022-04-02T00:35:41","DosTel1",6.44084
+"2022-04-02T00:37:21","DosTel1",5.941985
+"2022-04-02T00:39:14","DosTel1",4.52014
+"2022-04-02T00:40:00","DosTel1",3.7467835
+"2022-04-02T00:40:54","DosTel1",2.973427
+"2022-04-02T00:42:34","DosTel1",2.384861
+"2022-04-02T00:44:14","DosTel1",2.578191
+"2022-04-02T00:45:00","DosTel1",2.51374766666667
+"2022-04-02T00:47:34","DosTel1",1.783237
+"2022-04-02T00:49:27","DosTel1",1.806341
+"2022-04-02T00:50:00","DosTel1",1.87302326198083
+"2022-04-02T00:51:07","DosTel1",2.041164
+"2022-04-02T00:52:47","DosTel1",2.416696
+"2022-04-02T00:54:27","DosTel1",2.039773
+"2022-04-02T00:55:00","DosTel1",2.17095166666667
+"2022-04-02T00:56:07","DosTel1",2.056386
+"2022-04-02T00:57:47","DosTel1",2.666897
+"2022-04-02T00:59:40","DosTel1",3.101695
+"2022-04-02T01:00:00","DosTel1",3.21272415654952
+"2022-04-02T01:01:20","DosTel1",3.940538
+"2022-04-02T01:03:00","DosTel1",4.746696
+"2022-04-02T01:04:40","DosTel1",6.572122
+"2022-04-02T01:05:00","DosTel1",6.24009614376997
+</script>
+<script src="./app.js"></script>
+</body>
+</html>
