@@ -76,6 +76,7 @@ function scenario(emergency) {
     {sys:121,dia:77,pulse:86,baseline:68,sleep:5.1,usualSleep:7.8,mood:'Low',notes:'Unusually fatigued today'};
   Object.entries(data).forEach(([key,value]) => { form.elements[key].value = value; });
   form.querySelector('[name=red]').checked = emergency;
+  if ($('recheck')) $('recheck').hidden = true;
   if (emergency) previewUrgent();
   $('formStatus').textContent = 'Scenario loaded. Select Assess and log to save it.';
 }
@@ -84,7 +85,10 @@ $('emergency').onclick = () => scenario(true);
 $('clear').onclick = () => { form.reset(); $('outcome').hidden = true; $('formStatus').textContent = ''; };
 function previewUrgent() {
   const red = new FormData(form).getAll('red');
-  if (red.length) showOutcome(assess({red}));
+  if (red.length) {
+    if ($('recheck')) $('recheck').hidden = true;
+    showOutcome(assess({red}));
+  }
   else $('outcome').hidden = true;
 }
 form.querySelectorAll('[name=red]').forEach(control => control.onchange = previewUrgent);
@@ -108,6 +112,7 @@ form.onsubmit = event => {
   $('formStatus').textContent = save('logs',logs) ? 'Check-in saved on this device.' : 'Check-in available in this session. Browser storage is unavailable.';
   showOutcome(d.assessment);
   renderHistory();
+  renderRecheck();
   $('outcome').scrollIntoView({block:'nearest'});
 };
 function renderHistory() {
@@ -119,11 +124,88 @@ function renderHistory() {
     (d.sleep === null ? 'Sleep missing' : d.sleep + ' h sleep'))));
 }
 renderHistory();
+const recheckForm = $('recheckForm');
+function renderRecheck() {
+  if (!recheckForm) return;
+  const d = logs[0];
+  const eligible = d && d.pulse !== null && d.baseline !== null && d.assessment.level !== 'urgent' && !d.recheckEmergency;
+  $('recheck').hidden = !eligible;
+  recheckForm.reset();
+  recheckForm.hidden = true;
+  if (!eligible) return;
+  $('pulseComparison').textContent = d.baseline + ' usual → ' + d.pulse + ' first' +
+    (d.repeat ? ' → ' + d.repeat.pulse + ' repeat' : '') + ' bpm';
+  $('recheckResult').textContent = d.repeat ? d.repeat.result : 'Compare a second resting pulse with your first reading and baseline.';
+  $('startRecheck').hidden = Boolean(d.repeat);
+}
+if (recheckForm) {
+  $('startRecheck').onclick = () => {
+    recheckForm.hidden = false;
+    recheckForm.elements.repeat.focus();
+  };
+  $('cancelRecheck').onclick = () => {
+    recheckForm.reset();
+    recheckForm.hidden = true;
+    $('startRecheck').focus();
+  };
+  recheckForm.elements.urgent.onchange = event => {
+    if (!event.target.checked) return;
+    const d = logs[0];
+    d.recheckEmergency = {
+      timestamp: new Date().toISOString(),
+      assessment: assess({red:['Emergency symptom reported during pulse recheck.']})
+    };
+    const stored = save('logs',logs);
+    renderRecheck();
+    showOutcome(d.recheckEmergency.assessment);
+    $('formStatus').textContent = stored ? 'Emergency symptom saved on this device.' : 'Emergency symptom recorded in this session.';
+    $('outcome').scrollIntoView({block:'nearest'});
+  };
+  recheckForm.onsubmit = event => {
+    event.preventDefault();
+    const d = logs[0];
+    const pulse = recheckForm.elements.repeat.valueAsNumber;
+    const delta = Math.abs(pulse - d.baseline);
+    const result = delta >= 15 ?
+      'Repeat pulse still triggers the prototype baseline flag. Review it with the crew medical officer.' :
+      'Repeat pulse is below the prototype baseline flag threshold. Review any persistent symptoms with the crew medical officer.';
+    d.repeat = {pulse,timestamp:new Date().toISOString(),conditions:recheckForm.elements.conditions.value.trim(),result};
+    const stored = save('logs',logs);
+    renderRecheck();
+    $('recheckResult').textContent += stored ? ' Repeat saved on this device.' : ' Repeat is available in this session.';
+  };
+}
+renderRecheck();
 const records = $('archive').textContent.trim().split(/\r?\n/).slice(1).map(line => {
   const [timestamp,instrument,rate] = line.replaceAll('"','').split(',');
   return {timestamp,instrument,rate:Number(rate)};
 }).filter(row => Number.isFinite(row.rate) && row.timestamp && row.instrument);
 const seek = $('seek');
+let readingA = null;
+function describeReading(row) {
+  return row.timestamp.replace('T',' ') + ' UTC · ' + row.instrument + ' · ' + row.rate.toFixed(2) + ' μGy/h';
+}
+function difference(a,b) {
+  const change = b.rate - a.rate;
+  return (change > 0 ? '+' : '') + change.toFixed(2) + ' μGy/h';
+}
+function updateComparison() {
+  if (!readingA) return;
+  const b = records[Number(seek.value)];
+  $('archiveComparison').textContent = 'A · ' + describeReading(readingA) + ' | B · ' + describeReading(b) +
+    ' | B minus A: ' + difference(readingA,b);
+  $('attachPair').disabled = readingA === b;
+}
+if ($('pinReading')) {
+  $('pinReading').onclick = () => {
+    readingA = records[Number(seek.value)];
+    updateComparison();
+  };
+  $('attachPair').onclick = () => {
+    attachment = {a:readingA,b:records[Number(seek.value)]};
+    $('replayStatus').textContent = save('archive',attachment) ? 'Archive comparison saved for your next briefing.' : 'Archive comparison attached for this session.';
+  };
+}
 seek.max = records.length - 1;
 const chart = $('chart');
 const ctx = chart.getContext('2d');
@@ -137,6 +219,7 @@ function draw() {
   $('dose').textContent = selected.rate.toFixed(2) + ' μGy/h';
   $('when').textContent = selected.timestamp.replace('T',' ') + ' UTC · ' + selected.instrument;
   seek.setAttribute('aria-valuetext', $('when').textContent + ' · ' + $('dose').textContent);
+  updateComparison();
   if (!ctx) return;
   ctx.clearRect(0,0,780,290);
   ctx.font = '15px system-ui';
@@ -190,8 +273,16 @@ $('generate').onclick = () => {
     'Sleep: '+format(d.sleep,'h')+' · Usual: '+format(d.usualSleep,'h'),
     'Mood: '+(d.mood || 'Not recorded'),'Crew note: '+(d.notes || 'None recorded'),
     ...d.assessment.reasons.map(reason => '• '+reason),'Crew action: '+d.assessment.action,'');
-  if (attachment) lines.push('NASA OSDR RADLAB · Historical ISS context',attachment.timestamp+' UTC · '+attachment.instrument,
-    'Absorbed dose rate: '+attachment.rate+' μGy/h',
+  if (d?.repeat) lines.push('PULSE RECHECK',d.repeat.timestamp,
+    'Usual → First → Repeat: '+d.baseline+' → '+d.pulse+' → '+d.repeat.pulse+' bpm',
+    'Measurement conditions: '+(d.repeat.conditions || 'Unspecified'),d.repeat.result,'');
+  if (d?.recheckEmergency) lines.push('EMERGENCY DURING RECHECK',d.recheckEmergency.timestamp,
+    d.recheckEmergency.assessment.title,d.recheckEmergency.assessment.action,'');
+  if (attachment) lines.push('NASA OSDR RADLAB · Historical ISS context',
+    ...(attachment.a ? [
+      'Reading A: '+describeReading(attachment.a),'Reading B: '+describeReading(attachment.b),
+      'Difference (B minus A): '+difference(attachment.a,attachment.b)
+    ] : [attachment.timestamp+' UTC · '+attachment.instrument,'Absorbed dose rate: '+attachment.rate+' μGy/h']),
     'Instrument reading from a different mission. Personal exposure requires personal dosimetry.',
     'Source: https://visualization.osdr.nasa.gov/radlab/gui/data-api/');
   briefing = lines.join('\n');
